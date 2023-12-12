@@ -13,5 +13,5 @@ console.log(`Listening on port ${PORT}...`);
 
 //Event Emitter
 io.on('connection', (socket) => {
-    console.log('A user connected')
+    console.log('A user connected', socket.id)
 })
