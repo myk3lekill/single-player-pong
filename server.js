@@ -24,7 +24,7 @@ io.on('connection', (socket) => {
         //Track Players
         readyPlayerCount++;
 
-        if (readyPlayerCount === 2) {
+        if (readyPlayerCount % 2 === 0) {
             //Broadcast ('startGame')
             io.emit('startGame', socket.id)
         }
@@ -36,5 +36,9 @@ io.on('connection', (socket) => {
     //Track Ball Movements and Broadcast position to opponent player
     socket.on('ballMove', (ballData) => {
         socket.broadcast.emit('ballMove', ballData);
+    })
+    //Manage Disconnections
+    socket.on('disconnect', (reason) => {
+        console.log(`Client ${socket.id} disconnected: ${reason}`)
     })
 })
