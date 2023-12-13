@@ -32,5 +32,9 @@ io.on('connection', (socket) => {
     //Track Paddle Movements and Broadcast position to opponent player
     socket.on('paddleMove', (paddleData) => {
         socket.broadcast.emit('paddleMove', paddleData)
+    });
+    //Track Ball Movements and Broadcast position to opponent player
+    socket.on('ballMove', (ballData) => {
+        socket.broadcast.emit('ballMove', ballData);
     })
 })
