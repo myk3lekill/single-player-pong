@@ -4,8 +4,10 @@
 let readyPlayerCount = 0;
 
 function listen(io) {
-//Event Emitter
-    io.on('connection', (socket) => {
+    //Namespace
+    const pongNamespace = io.of('/pong');
+    //Event Emitter
+    pongNamespace.on('connection', (socket) => {
         console.log('A user connected', socket.id);
 
         socket.on('ready', () => {
@@ -16,7 +18,7 @@ function listen(io) {
 
             if (readyPlayerCount % 2 === 0) {
                 //Broadcast ('startGame')
-                io.emit('startGame', socket.id)
+                pongNamespace.emit('startGame', socket.id)
             }
         });
         //Track Paddle Movements and Broadcast position to opponent player
