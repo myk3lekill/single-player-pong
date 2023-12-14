@@ -9,29 +9,37 @@ function listen(io) {
     //Event Emitter
     pongNamespace.on('connection', (socket) => {
         console.log('A user connected', socket.id);
+        //Set Room variable scope
+        let room;
 
         socket.on('ready', () => {
-            console.log('Player ready', socket.id)
+            //Join Rooms with two players
+            room = 'room' + Math.floor(readyPlayerCount / 2);
+            socket.join(room)
+
+            console.log('Player ready', socket.id, room)
 
             //Track Players
             readyPlayerCount++;
 
             if (readyPlayerCount % 2 === 0) {
-                //Broadcast ('startGame')
-                pongNamespace.emit('startGame', socket.id)
+                //Broadcast ('startGame') sending to all client in game room including sender
+                pongNamespace.in(room).emit('startGame', socket.id)
             }
         });
         //Track Paddle Movements and Broadcast position to opponent player
         socket.on('paddleMove', (paddleData) => {
-            socket.broadcast.emit('paddleMove', paddleData)
+            socket.to(room).emit('paddleMove', paddleData)
         });
         //Track Ball Movements and Broadcast position to opponent player
         socket.on('ballMove', (ballData) => {
-            socket.broadcast.emit('ballMove', ballData);
+            socket.to(room).emit('ballMove', ballData);
         })
         //Manage Disconnections
         socket.on('disconnect', (reason) => {
             console.log(`Client ${socket.id} disconnected: ${reason}`)
+            //Leave Rooms
+            socket.leave(room)
         })
     })
 }
